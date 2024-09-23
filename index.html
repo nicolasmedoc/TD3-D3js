@@ -18,7 +18,8 @@ const height = viewSize.height - margin.top - margin.bottom;
 matSvg=d3.create("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
-    .append("g")
+;
+const matSvgG = matSvg.append("g")
     .attr("class","matSvgG")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 ;
