@@ -7,6 +7,7 @@
   const margin = {top: 100, right: 5, bottom: 5, left: 100};
   const marginLabelsToMatrix=5;
   let matSvg;
+  let matSvgG;
   const cellSize= 34;
   const radius = cellSize / 2;
 
@@ -19,11 +20,13 @@ matSvg=d3.create("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
 ;
-const matSvgG = matSvg.append("g")
+matSvgG = matSvg.append("g")
     .attr("class","matSvgG")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 ;
 const genData = genGridData(4,4)
+
+// add d3 code here
 
 container.append(matSvg.node())
 </script>
