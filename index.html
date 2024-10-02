@@ -1,32 +1,76 @@
 <!DOCTYPE html>
+<div id="control-bar-container">
+    <label>
+        Nb rows
+        <input name="nbRows" type="number"  onChange="handleOnChangeNbRows(this.value)"/>
+    </label>
+
+    <label>
+        Nb columns
+        <input name="nbCols" type="number" onChange="handleOnChangeNbCols(this.value)"/>
+    </label>
+    <button type="submit" onClick="handleOnClickGenerate()">Generate</button>
+</div>
+
 <div id="container"></div>
+
 <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
 <script type="text/javascript" src="./utils/helper.js"></script>
 <script type="module">
-  const viewSize = {width: 640, height: 640};
-  const margin = {top: 100, right: 5, bottom: 5, left: 100};
-  const marginLabelsToMatrix=5;
-  let matSvg;
-  let matSvgG;
-  const cellSize= 34;
-  const radius = cellSize / 2;
+    let nbCols=4;
+    let nbRows=4;
+    let genData = genGridData(nbRows, nbCols);
+    function handleOnClickGenerate(){
+        genData = genGridData(nbRows,nbCols);
+        renderMatrix(genData);
+    }
+    function handleOnChangeNbRows(val){
+        nbRows=val;
+    }
+    function handleOnChangeNbCols(val){
+        nbCols=val;
+    }
+    function handleOnClickCell(cellData){
+        genData=genData.map(item=>{
+            if (item.index===cellData.index){
+                return {...cellData,selected:!cellData.selected};
+            }else{
+                return item;
+            }
+        })
+        renderMatrix(genData);
+    }
+
+    const viewSize = {width: 640, height: 640};
+    const margin = {top: 100, right: 5, bottom: 5, left: 100};
+    const marginLabelsToMatrix=5;
+    let matSvg;
+    let matSvgG;
+    const cellSize= 34;
+    const radius = cellSize / 2;
 
 
-// create the svg size by reducing the margin
-const width = viewSize.width - margin.left - margin.right;
-const height = viewSize.height - margin.top - margin.bottom;
+    // create the svg size by reducing the margin
+    const width = viewSize.width - margin.left - margin.right;
+    const height = viewSize.height - margin.top - margin.bottom;
 
-matSvg=d3.create("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-;
-matSvgG = matSvg.append("g")
-    .attr("class","matSvgG")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-;
-const genData = genGridData(4,4)
+    matSvg=d3.create("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+    ;
+    matSvgG = matSvg.append("g")
+        .attr("class","matSvgG")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    ;
+    function removeMatrix(){
+        matSvgG.selectAll('*').remove();
+    }
 
-// add d3 code here
+    function renderMatrix(genData) {
+        // add d3 code here
+    }
 
-container.append(matSvg.node())
+    renderMatrix(genData)
+
+    container.append(matSvg.node())
 </script>
