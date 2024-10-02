@@ -68,6 +68,50 @@
 
     function renderMatrix(genData) {
         // add d3 code here
+        const cellG = matSvgG.selectAll(".cellG")
+            // all elements with the class .cellG (empty the first time)
+            .data(genData,(cellData)=>cellData.index)
+            .enter()
+            // all data items to add:
+            // doesn’exist in the select but exist in the new array
+            .append("g")
+            .attr("class","cellG")
+            .attr("transform",(cellData)=>{
+                return "translate("+(cellData.colPos*cellSize)+","+(cellData.rowPos*cellSize)+")"
+            })
+        ;
+        // build the size scale
+        const minNbProductSold = d3.min(genData.map(cellData=>cellData.nbProductSold));
+        const maxNbProductSold = d3.max(genData.map(cellData=>cellData.nbProductSold));
+        const cellSizeScale = d3.scaleLinear()
+            .domain([minNbProductSold, maxNbProductSold])
+            .range([2, radius-1])
+        ;
+        // build the color scale
+        const colorScheme = d3.schemeYlGnBu[9];
+        const cellColorScale = d3.scaleQuantile()
+            .domain(genData.map(cellData=>cellData.salesGrowth))
+            .range(colorScheme)
+        ;
+
+        // render rect as child of each element "g"
+        cellG.append("rect")
+            .attr("class","CellRect")
+            .attr("width",cellSize-1)
+            .attr("height",cellSize-1)
+            .attr("fill","lightGray")
+        ;
+// render circle as child of each element "g"
+        cellG.append("circle")
+            .attr("class","CellCircle")
+            .attr("cx",radius)
+            .attr("cy",radius)
+            .attr("r",(cellData)=>cellSizeScale(cellData.nbProductSold))
+            .attr("fill",(cellData) =>{
+                const color = cellColorScale(cellData.salesGrowth);
+                return color;
+            })
+        ;
     }
 
     renderMatrix(genData)
