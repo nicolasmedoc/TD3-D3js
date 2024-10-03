@@ -67,17 +67,21 @@
     }
 
     function renderMatrix(genData) {
+        removeMatrix();
         // add d3 code here
         const cellG = matSvgG.selectAll(".cellG")
             // all elements with the class .cellG (empty the first time)
             .data(genData,(cellData)=>cellData.index)
             .enter()
             // all data items to add:
-            // doesn’exist in the select but exist in the new array
+            // didn't exist in the previous data binding but exist now in the new array
             .append("g")
             .attr("class","cellG")
             .attr("transform",(cellData)=>{
                 return "translate("+(cellData.colPos*cellSize)+","+(cellData.rowPos*cellSize)+")"
+            })
+            .on("click", (event,cellData)=>{
+                handleOnClickCell(cellData);
             })
         ;
         // build the size scale
@@ -111,6 +115,8 @@
                 const color = cellColorScale(cellData.salesGrowth);
                 return color;
             })
+            .attr("stroke", "red")
+            .attr("stroke-width", (cellData)=>cellData.selected?2:0)
         ;
     }
 
