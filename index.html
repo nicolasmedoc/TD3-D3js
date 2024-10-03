@@ -16,7 +16,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
 <script type="text/javascript" src="./utils/helper.js"></script>
-<script type="module">
+<script>
     let nbCols=4;
     let nbRows=4;
     let genData = genGridData(nbRows, nbCols);
@@ -67,23 +67,6 @@
     }
 
     function renderMatrix(genData) {
-        removeMatrix();
-        // add d3 code here
-        const cellG = matSvgG.selectAll(".cellG")
-            // all elements with the class .cellG (empty the first time)
-            .data(genData,(cellData)=>cellData.index)
-            .enter()
-            // all data items to add:
-            // didn't exist in the previous data binding but exist now in the new array
-            .append("g")
-            .attr("class","cellG")
-            .attr("transform",(cellData)=>{
-                return "translate("+(cellData.colPos*cellSize)+","+(cellData.rowPos*cellSize)+")"
-            })
-            .on("click", (event,cellData)=>{
-                handleOnClickCell(cellData);
-            })
-        ;
         // build the size scale
         const minNbProductSold = d3.min(genData.map(cellData=>cellData.nbProductSold));
         const maxNbProductSold = d3.max(genData.map(cellData=>cellData.nbProductSold));
@@ -98,26 +81,57 @@
             .range(colorScheme)
         ;
 
-        // render rect as child of each element "g"
-        cellG.append("rect")
-            .attr("class","CellRect")
-            .attr("width",cellSize-1)
-            .attr("height",cellSize-1)
-            .attr("fill","lightGray")
-        ;
-// render circle as child of each element "g"
-        cellG.append("circle")
-            .attr("class","CellCircle")
-            .attr("cx",radius)
-            .attr("cy",radius)
-            .attr("r",(cellData)=>cellSizeScale(cellData.nbProductSold))
-            .attr("fill",(cellData) =>{
-                const color = cellColorScale(cellData.salesGrowth);
-                return color;
-            })
-            .attr("stroke", "red")
-            .attr("stroke-width", (cellData)=>cellData.selected?2:0)
-        ;
+        function updateMatrix(update){
+            // all data items matching with the previous data binding
+            update.attr("transform",(cellData)=>{
+                return "translate("+(cellData.colPos*cellSize)+","+(cellData.rowPos*cellSize)+")"
+            });
+            const circleSelection = update.select(".CellCircle")
+                .attr("r",(cellData)=>cellSizeScale(cellData.nbProductSold))
+                .attr("fill",(cellData) =>{
+                    const color = cellColorScale(cellData.salesGrowth);
+                    return color;
+                })
+                .attr("stroke-width", (cellData)=>cellData.selected?2:0);
+            ;
+        }
+
+        // add d3 code here
+        matSvgG.selectAll(".cellG")
+            // all elements with the class .cellG (empty the first time)
+            .data(genData,(cellData)=>cellData.index)
+            .join(
+              enter=>{
+                  // all data items to add:
+                  // didn't exist in the previous data binding but exist now in the new array
+                  const cellG = enter.append("g")
+                      .attr("class","cellG")
+                      .on("click", (event,cellData)=>{
+                          handleOnClickCell(cellData);
+                      })
+                  ;
+                  // render rect as child of each element "g"
+                  cellG.append("rect")
+                      .attr("class","CellRect")
+                      .attr("width",cellSize-1)
+                      .attr("height",cellSize-1)
+                      .attr("fill","lightGray")
+                  ;
+                  // render circle as child of each element "g"
+                  cellG.append("circle")
+                      .attr("class","CellCircle")
+                      .attr("cx",radius)
+                      .attr("cy",radius)
+                      .attr("stroke", "red")
+                  ;
+                  updateMatrix(cellG);
+              },
+              updateMatrix,
+              exit=>{
+                  // all data items that don't exist anymore
+                  exit.remove();
+              }
+            ); // end join()
     }
 
     renderMatrix(genData)
