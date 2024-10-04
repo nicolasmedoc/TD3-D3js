@@ -88,15 +88,11 @@ function renderMatrix(genData){
     .range(colorScheme)
   ;
   function updateCells(selection){
-    selection.transition()
-      .duration(transitionDuration)
-      .attr("transform",(cellData)=>{
+    selection.attr("transform",(cellData)=>{
             return "translate("+(cellData.colPos*cellSize)+","+(cellData.rowPos*cellSize)+")"
           })
     ;
     selection.select(".CellCircle")
-      .transition()
-      .duration(transitionDuration)
       .attr("r",(cellData)=>cellSizeScale(cellData.nbProductSold))
       .attr("fill",(cellData) =>{
         const color = cellColorScale(cellData.salesGrowth);
@@ -138,23 +134,7 @@ function renderMatrix(genData){
       },
       updateCells,
       exit =>{
-        exit.select(".CellRect")
-            .transition()
-            .duration(transitionDuration)
-            .attr("width",0)
-            .attr("height",0)
-        ;
-        exit.select(".CellCircle")
-            .transition()
-            .duration(transitionDuration)
-            .attr("cx",0)
-            .attr("cy",0)
-            .attr("r",0)
-        ;
-        exit.transition()
-            .duration(transitionDuration)
-            .attr("transform","translate("+width+","+height+")")
-            .remove()
+        exit.remove()
         ;
       }
 
