@@ -126,7 +126,7 @@
                   ;
                   updateMatrix(cellG);
               },
-              updateMatrix,
+              update=>{updateMatrix(update)},
               exit=>{
                   // all data items that don't exist anymore
                   exit.remove();
