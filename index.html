@@ -136,7 +136,7 @@ function renderMatrix(genData){
         ;
         updateCells(cellG);
       },
-      updateCells,
+      update=>{updateCells(update)},
       exit =>{
         exit.select(".CellRect")
             .transition()
